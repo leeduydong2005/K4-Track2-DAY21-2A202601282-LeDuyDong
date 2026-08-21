@@ -1,8 +1,19 @@
+import os
+import sys
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import boto3
 import joblib
-import os
+
+try:
+    import sklearn._loss
+    if hasattr(sklearn._loss, "HalfBinomialLoss") and not hasattr(sklearn._loss, "CyHalfBinomialLoss"):
+        sklearn._loss.CyHalfBinomialLoss = sklearn._loss.HalfBinomialLoss
+    if hasattr(sklearn._loss, "HalfMultinomialLoss") and not hasattr(sklearn._loss, "CyHalfMultinomialLoss"):
+        sklearn._loss.CyHalfMultinomialLoss = sklearn._loss.HalfMultinomialLoss
+    sys.modules["_loss"] = sklearn._loss
+except Exception:
+    pass
 
 app = FastAPI()
 
